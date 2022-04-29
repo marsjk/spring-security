@@ -159,6 +159,23 @@ public class OidcClientInitiatedServerLogoutSuccessHandlerTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> this.handler.setPostLogoutRedirectUri((String) null));
 	}
 
+	@Test
+	public void logoutWhenUsingStateThenIncludesItInRedirect() throws IOException, ServletException {
+		OAuth2AuthenticationToken token = new OAuth2AuthenticationToken(TestOidcUsers.create(),
+				AuthorityUtils.NO_AUTHORITIES, this.registration.getRegistrationId());
+		given(this.exchange.getPrincipal()).willReturn(Mono.just(token));
+		WebFilterExchange f = new WebFilterExchange(this.exchange, this.chain);
+		this.handler.setState("My state");
+		this.handler.onLogoutSuccess(f, token).block();
+		assertThat(redirectedUrl(this.exchange)).isEqualTo("https://endpoint?" + "id_token_hint=id-token&"
+				+ "state=My%20state");
+	}
+
+	@Test
+	public void setStateWhenGivenNullThenThrowsException() {
+		assertThatIllegalArgumentException().isThrownBy(() -> this.handler.setState(null));
+	}
+
 	private String redirectedUrl(ServerWebExchange exchange) {
 		return exchange.getResponse().getHeaders().getFirst("Location");
 	}

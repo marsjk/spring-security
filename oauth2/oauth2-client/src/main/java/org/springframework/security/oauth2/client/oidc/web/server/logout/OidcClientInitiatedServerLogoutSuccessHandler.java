@@ -57,6 +57,8 @@ public class OidcClientInitiatedServerLogoutSuccessHandler implements ServerLogo
 
 	private String postLogoutRedirectUri;
 
+	private String state;
+
 	/**
 	 * Constructs an {@link OidcClientInitiatedServerLogoutSuccessHandler} with the
 	 * provided parameters
@@ -111,6 +113,9 @@ public class OidcClientInitiatedServerLogoutSuccessHandler implements ServerLogo
 		builder.queryParam("id_token_hint", idToken);
 		if (postLogoutRedirectUri != null) {
 			builder.queryParam("post_logout_redirect_uri", postLogoutRedirectUri);
+		}
+		if (state != null) {
+			builder.queryParam("state", state);
 		}
 		return builder.encode(StandardCharsets.UTF_8).build().toUri();
 	}
@@ -176,4 +181,17 @@ public class OidcClientInitiatedServerLogoutSuccessHandler implements ServerLogo
 		this.serverLogoutSuccessHandler.setLogoutSuccessUrl(logoutSuccessUrl);
 	}
 
+	/**
+	 * Opaque value used by the RP to maintain state between the logout request and the callback
+	 * to the endpoint specified by the {@code post_logout_redirect_uri} parameter. If included
+	 * in the logout request, the OP passes this value back to the RP using the state parameter
+	 * when redirecting the User Agent back to the RP.
+	 *
+	 * @param state - Opaque value to maintain state using the
+	 * {@code state} query parameter
+	 */
+	public void setState(String state) {
+		Assert.notNull(state, "state cannot be null");
+		this.state = state;
+	}
 }

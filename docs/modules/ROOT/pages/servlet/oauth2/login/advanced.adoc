@@ -939,6 +939,9 @@ public class OAuth2LoginSecurityConfig {
 		// Sets the location that the End-User's User Agent will be redirected to
 		// after the logout has been performed at the Provider
 		oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+		// Optional opaque value that can be used to maintain state between the logout
+		// request and the callback to the endpoint specified by the above setPostLogoutRedirectUri
+		oidcLogoutSuccessHandler.setState("some_opaque_value");
 
 		return oidcLogoutSuccessHandler;
 	}
@@ -973,6 +976,9 @@ class OAuth2LoginSecurityConfig {
         // Sets the location that the End-User's User Agent will be redirected to
         // after the logout has been performed at the Provider
         oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}")
+        // Optional opaque value that can be used to maintain state between the logout
+        // request and the callback to the endpoint specified by the above setPostLogoutRedirectUri
+        oidcLogoutSuccessHandler.setState("some_opaque_value")
         return oidcLogoutSuccessHandler
     }
 }

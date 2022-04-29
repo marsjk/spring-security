@@ -52,6 +52,8 @@ public final class OidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLogo
 
 	private String postLogoutRedirectUri;
 
+	private String state;
+
 	public OidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
 		Assert.notNull(clientRegistrationRepository, "clientRegistrationRepository cannot be null");
 		this.clientRegistrationRepository = clientRegistrationRepository;
@@ -118,6 +120,9 @@ public final class OidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLogo
 		if (postLogoutRedirectUri != null) {
 			builder.queryParam("post_logout_redirect_uri", postLogoutRedirectUri);
 		}
+		if (state != null) {
+			builder.queryParam("state", state);
+		}
 		// @formatter:off
 		return builder.encode(StandardCharsets.UTF_8)
 				.build()
@@ -154,6 +159,20 @@ public final class OidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLogo
 	public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
 		Assert.notNull(postLogoutRedirectUri, "postLogoutRedirectUri cannot be null");
 		this.postLogoutRedirectUri = postLogoutRedirectUri;
+	}
+
+	/**
+	 * Opaque value used by the RP to maintain state between the logout request and the callback
+	 * to the endpoint specified by the {@code post_logout_redirect_uri} parameter. If included
+	 * in the logout request, the OP passes this value back to the RP using the state parameter
+	 * when redirecting the User Agent back to the RP.
+	 *
+	 * @param state - Opaque value to maintain state using the
+	 * {@code state} query parameter
+	 */
+	public void setState(String state) {
+		Assert.notNull(state, "state cannot be null");
+		this.state = state;
 	}
 
 }

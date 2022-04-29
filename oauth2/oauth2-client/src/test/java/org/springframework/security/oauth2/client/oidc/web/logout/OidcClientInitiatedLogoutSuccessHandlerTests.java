@@ -176,4 +176,19 @@ public class OidcClientInitiatedLogoutSuccessHandlerTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> this.handler.setPostLogoutRedirectUri((String) null));
 	}
 
+	@Test
+	public void logoutWhenUsingStateThenIncludesItInRedirect() throws IOException, ServletException {
+		OAuth2AuthenticationToken token = new OAuth2AuthenticationToken(TestOidcUsers.create(),
+				AuthorityUtils.NO_AUTHORITIES, this.registration.getRegistrationId());
+		this.handler.setState("My state");
+		this.request.setUserPrincipal(token);
+		this.handler.onLogoutSuccess(this.request, this.response, token);
+		assertThat(this.response.getRedirectedUrl()).isEqualTo("https://endpoint?" + "id_token_hint=id-token&"
+				+ "state=My%20state");
+	}
+
+	@Test
+	public void setStateWhenGivenNullThenThrowsException() {
+		assertThatIllegalArgumentException().isThrownBy(() -> this.handler.setState(null));
+	}
 }
